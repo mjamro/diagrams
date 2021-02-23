@@ -180,7 +180,7 @@ class Template(Custom):
     text_color = '#000000'
     text_font = 'arial.ttf'
     text_font_size = 30
-    text_stroke_width = 4
+    text_stroke_width = 0
     text_stroke_color = 'white'
     text_spacing = -5
     shape = "cube"
@@ -195,35 +195,39 @@ class Template(Custom):
         margin = self.margin
 
         img = Image.new("RGBA", self.size, "#ffffff00")  
-        draw = ImageDraw.Draw(img)   
+        canvas = ImageDraw.Draw(img)   
       
         if self.shape in shapes:
             shape = shapes[self.shape]
 
             if 'outline' in shape:
                 xy = scale(shape['outline'], margin, width, height)
-                draw.line(xy, fill=self.color, width=10, joint="curve")
+                canvas.line(xy, fill=self.color, width=10, joint="curve")
 
             if 'interior' in shape:
-                xy = scale(shape['interior'], margin+15, width, height)
-                draw.polygon(xy, fill=self.color)
+                xy = scale(shape['interior'], 3 * margin, width, height)
+                canvas.polygon(xy, fill=self.color)
         
-            if self.text and not self.text.isspace():
-
-                font = ImageFont.truetype(self.text_font, self.text_font_size)
-                text_width, text_height = draw.multiline_textsize(self.text, font=font, stroke_width=self.text_stroke_width, spacing=self.text_spacing)
-
-                xy = (width/2 - text_width/2,  margin + (height - 2* margin ) * 5/8 + 10 - text_height/2)
-                draw.multiline_text(xy, text=self.text, font=font, fill=self.text_color, spacing=self.text_spacing, stroke_width=self.text_stroke_width, stroke_fill=self.text_stroke_color, align='center')
-
+            self.draw_text(canvas)
 
         _, path = tempfile.mkstemp(suffix=None, prefix=None, dir=None, text=False)
 
         img.save(path, "PNG")
 
-        print(path)
-
         return path
+
+    def draw_text(self, canvas):
+        if self.text and not self.text.isspace():
+
+            width, height = self.size
+            margin = self.margin
+
+            font = ImageFont.truetype(self.text_font, self.text_font_size)
+            text_width, text_height = canvas.multiline_textsize(self.text, font=font, stroke_width=self.text_stroke_width, spacing=self.text_spacing)
+
+            x = width/2 - text_width/2
+            y = margin + (height - 2 * margin ) * 5/8 + self.margin - text_height/2
+            canvas.multiline_text((x, y), text=self.text, font=font, fill=self.text_color, spacing=self.text_spacing, stroke_width=self.text_stroke_width, stroke_fill=self.text_stroke_color, align='center')
 
 
 class CubeTemplate(Template):
