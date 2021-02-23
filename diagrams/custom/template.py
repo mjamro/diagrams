@@ -14,7 +14,6 @@ def scale(coords, margin, width, height):
     
     return list(map(lambda m: (m[0] * effective_width/2 + width/2, m[1] * effective_height/2 + height/2) , coords))
 
-
 shapes = {
     "cube": {
         "outline": [
@@ -32,6 +31,28 @@ shapes = {
             (0.87, -0.50),
             (0.0, 0.0),
             ( -0.87, -0.50),
+        ]
+    },
+    "hex": {
+        "outline": [
+            (-0.87, 0.55), 
+            (-0.87, -0.55),
+            (-0.35, -0.913), 
+            (0.35, -0.913),
+            (0.87, -0.55),
+            (0.87, 0.55),
+            (0.35, 0.913),
+            (-0.35, 0.913),
+            (-0.87, 0.55)
+        ],
+        "interior": [
+            (-0.87, -0.55),
+            (-0.35, -0.913), 
+            (0.35, -0.913), 
+            (0.87, -0.55),
+            (0.35, -0.18700000000000003),
+            (-0.35, -0.18700000000000003),
+            (-0.87, -0.55)
         ]
     },
     "cylinder": {
@@ -232,6 +253,9 @@ class Template(Custom):
 
 class CubeTemplate(Template):
     shape = "cube"
+
+class HexTemplate(Template):
+    shape = "hex"
 
 class CylinderTemplate(Template):
     shape = "cylinder"
