@@ -284,3 +284,68 @@ with Diagram("Broker Consumers", show=False):
 ```
 
 ![rabbitmq consumers diagram](/img/rabbitmq_consumers_diagram.png)
+
+## e-Commerce architecture (generic template nodes)
+
+```python
+from diagrams import Diagram
+from diagrams.custom.template import HexTemplate, CubeTemplate, CylinderTemplate
+
+class MessageQueue(HexTemplate):
+    color = '#f1bb1b'
+    text_color = color
+    text_font_size = 50
+    text = "MQ"
+
+class LoadBalancer(HexTemplate):
+    color = '#9400D3'
+    text_color = color
+    text_font_size = 50
+    text = "BAL"
+
+class Database(CylinderTemplate):
+    color = "#808080"
+    text_color = color
+    text_font_size = 50
+    text = "DB"
+
+class Ui(CubeTemplate):
+    color = '#5DA5DA'
+    text_color = color
+    text_font_size = 50
+    text = "UI"
+
+class Microservice(CubeTemplate):
+    color = '#F15854'
+    text_color = color
+    text_font_size = 50
+    text = "SVC"
+
+
+with Diagram("e-Commerce", show=False):
+
+    storefront = Ui("Storefront")
+
+    LoadBalancer("Load Balancer") - storefront
+
+    accounts = Microservice("Accounts")
+    inventory = Microservice("Inventory")
+    shopping = Microservice("Shopping")
+
+    storefront - [accounts, inventory, shopping]
+ 
+    accounts - Database("Accounts DB")
+
+    inventory - Database("Inventory DB")
+
+    mq = MessageQueue("RabbitMQ")
+
+    billing = Microservice("Billing")
+
+    shopping - mq - billing
+    accounts - mq
+    inventory - mq
+```
+
+
+![generic template nodes diagram](/img/advanced_web_service_with_on-premise.png)
